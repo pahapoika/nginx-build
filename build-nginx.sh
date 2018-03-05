@@ -99,8 +99,8 @@ if [ ! -d "/var/cache/nginx/" ]; then
 fi
 
 # Add nginx group and user if they do not already exist
-id -g nginx &>/dev/null || addgroup --system nginx
-id -u nginx &>/dev/null || adduser --disabled-password --system --home /var/cache/nginx --shell /sbin/nologin --group nginx
+id -g nginx &>/dev/null || groupadd --system nginx
+id -u nginx &>/dev/null || useradd --disabled-password --system --home /var/cache/nginx --shell /sbin/nologin --group nginx
 
 # Test to see if our version of gcc supports __SIZEOF_INT128__
 if gcc -dM -E - </dev/null | grep -q __SIZEOF_INT128__
