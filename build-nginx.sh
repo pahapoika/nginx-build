@@ -8,21 +8,20 @@ set -e -x
 # Set names of latest versions of each package
 export VERSION_PCRE=pcre-8.41
 export VERSION_ZLIB=zlib-1.2.11
-export VERSION_OPENSSL=openssl-1.1.0g
+export VERSION_LIBRESSL=libressl-2.6.4
 export VERSION_NGINX=nginx-1.13.9
 
 # Set checksums of latest versions
 export SHA256_PCRE=244838e1f1d14f7e2fa7681b857b3a8566b74215f28133f14a8f5e59241b682c
 export SHA256_ZLIB=c3e5e9fdd5004dcb542feda5ee4f0ff0744628baf8ed2dd5d66f8ca1197cb1a1
-export SHA256_OPENSSL=de4d501267da39310905cb6dc8c6121f7a2cad45a7707f76df828fe1b85073af
+export SHA256_LIBRESSL=638a20c2f9e99ee283a841cd787ab4d846d1880e180c4e96904fc327d419d11f
 export SHA256_NGINX=5faea18857516fe68d30be39c3032bd22ed9cf85e1a6fdf32e3721d96ff7fa42
 
 # Set GPG keys used to sign downloads
-export GPG_OPENSSL=8657ABB260F056B1E5190839D9C4D26D0E604491
 export GPG_NGINX=B0F4253373F8F6F510D42178520A9993A1C052F8
 
 # Set URLs to the source directories
-export SOURCE_OPENSSL=https://www.openssl.org/source/
+export SOURCE_LIBRESSL=https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/
 export SOURCE_PCRE=https://ftp.pcre.org/pub/pcre/
 export SOURCE_ZLIB=https://zlib.net/
 export SOURCE_NGINX=https://nginx.org/download/
@@ -52,13 +51,12 @@ curl -L $SOURCE_PCRE$VERSION_PCRE.tar.gz -o ./build/PCRE.tar.gz && \
   echo "${SHA256_PCRE} ./build/PCRE.tar.gz" | sha256sum -c -
 curl -L $SOURCE_ZLIB$VERSION_ZLIB.tar.gz -o ./build/ZLIB.tar.gz && \
   echo "${SHA256_ZLIB} ./build/ZLIB.tar.gz" | sha256sum -c -
-curl -L $SOURCE_OPENSSL$VERSION_OPENSSL.tar.gz -o ./build/OPENSSL.tar.gz && \
-  echo "${SHA256_OPENSSL} ./build/OPENSSL.tar.gz" | sha256sum -c -
+curl -L $SOURCE_LIBRESSL$VERSION_LIBRESSL.tar.gz -o ./build/OPENSSL.tar.gz && \
+  echo "${SHA256_OPENSSL} ./build/LIBRESSL.tar.gz" | sha256sum -c -
 curl -L $SOURCE_NGINX$VERSION_NGINX.tar.gz -o ./build/NGINX.tar.gz && \
   echo "${SHA256_NGINX} ./build/NGINX.tar.gz" | sha256sum -c -
 
 # Download the signature files
-curl -L $SOURCE_OPENSSL$VERSION_OPENSSL.tar.gz.asc -o ./build/OPENSSL.tar.gz.asc
 curl -L $SOURCE_NGINX$VERSION_NGINX.tar.gz.asc -o ./build/NGINX.tar.gz.asc
 
 # Verify GPG signature of downloads
@@ -73,13 +71,13 @@ rm -r "$GNUPGHOME" OPENSSL.tar.gz.asc NGINX.tar.gz.asc
 # Expand the source files
 tar xzf PCRE.tar.gz
 tar xzf ZLIB.tar.gz
-tar xzf OPENSSL.tar.gz
+tar xzf LIBRESSL.tar.gz
 tar xzf NGINX.tar.gz
 # Clean up
 rm -r \
   PCRE.tar.gz \
   ZLIB.tar.gz \
-  OPENSSL.tar.gz \
+  LIBRESSL.tar.gz \
   NGINX.tar.gz
 cd ../
 
@@ -119,7 +117,7 @@ cd $BPATH/$VERSION_NGINX
 --with-pcre=$BPATH/$VERSION_PCRE \
 --with-zlib=$BPATH/$VERSION_ZLIB \
 --with-openssl-opt="no-weak-ssl-ciphers no-ssl3 no-shared $ECFLAG -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong" \
---with-openssl=$BPATH/$VERSION_OPENSSL \
+--with-openssl=$BPATH/$VERSION_LIBRESSL \
 --sbin-path=/usr/sbin/nginx \
 --modules-path=/usr/lib/nginx/modules \
 --conf-path=/etc/nginx/nginx.conf \
