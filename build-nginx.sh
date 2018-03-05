@@ -100,7 +100,7 @@ fi
 
 # Add nginx group and user if they do not already exist
 id -g nginx &>/dev/null || groupadd --system nginx
-id -u nginx &>/dev/null || useradd --disabled-password --system --home /var/cache/nginx --shell /sbin/nologin --group nginx
+id -u nginx &>/dev/null || useradd --system -d /var/cache/nginx --shell /sbin/nologin --disabled-login -g nginx nginx
 
 # Test to see if our version of gcc supports __SIZEOF_INT128__
 if gcc -dM -E - </dev/null | grep -q __SIZEOF_INT128__
@@ -308,8 +308,9 @@ case "$1" in
         exit 2
 esac
 EOF
+chmod +x /etc/init.d/nginx
 fi
 
 echo "All done.";
-echo "Start with sudo systemctl start nginx"
+echo "Start with /etc/init.d/nginx start"
 echo "or with sudo nginx"
