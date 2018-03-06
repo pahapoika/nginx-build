@@ -38,14 +38,8 @@ rm -rf /etc/nginx-default
 mkdir $BPATH
 
 # Ensure the required software to compile nginx is installed
-#apt-get update && apt-get -y install \
-  #binutils \
-  #build-essential \
-  #curl \
-  #dirmngr \
-  #libssl-dev
-   yum -y groupinstall "Development Tools"
-
+yum -y groupinstall "Development Tools"
+   
 # Download the source files
 curl -L $SOURCE_PCRE$VERSION_PCRE.tar.gz -o ./build/PCRE.tar.gz && \
   echo "${SHA256_PCRE} ./build/PCRE.tar.gz" | sha256sum -c -
