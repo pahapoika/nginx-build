@@ -54,7 +54,7 @@ curl -L $SOURCE_ZLIB$VERSION_ZLIB.tar.gz -o ./build/ZLIB.tar.gz && \
 curl -L $SOURCE_NGINX$VERSION_NGINX.tar.gz -o ./build/NGINX.tar.gz && \
   echo "${SHA256_NGINX} ./build/NGINX.tar.gz" | sha256sum -c -
 curl -L $SOURCE_LIBRESSL$VERSION_LIBRESSL.tar.gz -o ./build/LIBRESSL.tar.gz && \
-  echo "${SHA256_LIBRESSL} ./build/OPENSSL.tar.gz" | sha256sum -c -  
+  echo "${SHA256_LIBRESSL} ./build/LIBRESSL.tar.gz" | sha256sum -c -  
 
 
 # Download the signature files
