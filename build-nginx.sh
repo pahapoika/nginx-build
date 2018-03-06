@@ -59,7 +59,7 @@ cd $BPATH
 export GNUPGHOME="$(mktemp -d)"
 gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$GPG_NGINX"
 gpg --batch --verify NGINX.tar.gz.asc NGINX.tar.gz
-rm -r "$GNUPGHOME" OPENSSL.tar.gz.asc NGINX.tar.gz.asc
+rm -r "$GNUPGHOME" NGINX.tar.gz.asc
 
 # Expand the source files
 tar xzf PCRE.tar.gz
