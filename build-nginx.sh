@@ -97,7 +97,7 @@ fi
 
 # Add nginx group and user if they do not already exist
 id -g nginx &>/dev/null || groupadd --system nginx
-id -u nginx &>/dev/null || useradd --system -d /var/cache/nginx --shell /sbin/nologin --disabled-login -g nginx nginx
+id -u nginx &>/dev/null || useradd --system -d /var/cache/nginx --shell /sbin/nologin -g nginx nginx
 
 # Test to see if our version of gcc supports __SIZEOF_INT128__
 if gcc -dM -E - </dev/null | grep -q __SIZEOF_INT128__
@@ -115,7 +115,7 @@ cd $BPATH/$VERSION_NGINX
 --with-ld-opt='-Wl,-Bsymbolic-functions -Wl,-z,relro' \
 --with-pcre=$BPATH/$VERSION_PCRE \
 --with-zlib=$BPATH/$VERSION_ZLIB \
---with-openssl-opt="no-weak-ssl-ciphers no-ssl3 no-shared $ECFLAG -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong" \
+--with-openssl-opt="no-shared $ECFLAG -fstack-protector-strong" \
 --with-openssl=$BPATH/$VERSION_LIBRESSL \
 --sbin-path=/usr/sbin/nginx \
 --modules-path=/usr/lib/nginx/modules \
@@ -168,146 +168,27 @@ if [ -d "/etc/nginx-$today" ]; then
 fi
 
 # Create NGINX init service file if it does not already exist
-if [ ! -e "/etc/init.d/nginx" ]; then
+if [ ! -e "/lib/systemd/system/nginx.service" ]; then
   # Control will enter here if $DIRECTORY doesn't exist.
-  FILE="/etc/init.d/nginx"
+  FILE="/lib/systemd/system/nginx.service"
 
   /bin/cat >$FILE <<'EOF'
-#!/bin/sh
-#
-# nginx - this script starts and stops the nginx daemon
-#
-# chkconfig:   - 85 15
-# description:  NGINX is an HTTP(S) server, HTTP(S) reverse \
-#               proxy and IMAP/POP3 proxy server
-# processname: nginx
-# config:      /etc/nginx/nginx.conf
-# config:      /etc/sysconfig/nginx
-# pidfile:     /var/run/nginx.pid
-
-# Source function library.
-. /etc/rc.d/init.d/functions
-
-# Source networking configuration.
-. /etc/sysconfig/network
-
-# Check that networking is up.
-[ "$NETWORKING" = "no" ] && exit 0
-
-nginx="/usr/sbin/nginx"
-prog=$(basename $nginx)
-
-NGINX_CONF_FILE="/etc/nginx/nginx.conf"
-
-[ -f /etc/sysconfig/nginx ] && . /etc/sysconfig/nginx
-
-lockfile=/var/lock/subsys/nginx
-
-make_dirs() {
-   # make required directories
-   user=`$nginx -V 2>&1 | grep "configure arguments:.*--user=" | sed 's/[^*]*--user=\([^ ]*\).*/\1/g' -`
-   if [ -n "$user" ]; then
-      if [ -z "`grep $user /etc/passwd`" ]; then
-         useradd -M -s /bin/nologin $user
-      fi
-      options=`$nginx -V 2>&1 | grep 'configure arguments:'`
-      for opt in $options; do
-          if [ `echo $opt | grep '.*-temp-path'` ]; then
-              value=`echo $opt | cut -d "=" -f 2`
-              if [ ! -d "$value" ]; then
-                  # echo "creating" $value
-                  mkdir -p $value && chown -R $user $value
-              fi
-          fi
-       done
-    fi
-}
-
-start() {
-    [ -x $nginx ] || exit 5
-    [ -f $NGINX_CONF_FILE ] || exit 6
-    make_dirs
-    echo -n $"Starting $prog: "
-    daemon $nginx -c $NGINX_CONF_FILE
-    retval=$?
-    echo
-    [ $retval -eq 0 ] && touch $lockfile
-    return $retval
-}
-
-stop() {
-    echo -n $"Stopping $prog: "
-    killproc $prog -QUIT
-    retval=$?
-    echo
-    [ $retval -eq 0 ] && rm -f $lockfile
-    return $retval
-}
-
-restart() {
-    configtest || return $?
-    stop
-    sleep 1
-    start
-}
-
-reload() {
-    configtest || return $?
-    echo -n $"Reloading $prog: "
-    killproc $nginx -HUP
-    RETVAL=$?
-    echo
-}
-
-force_reload() {
-    restart
-}
-
-configtest() {
-  $nginx -t -c $NGINX_CONF_FILE
-}
-
-rh_status() {
-    status $prog
-}
-
-rh_status_q() {
-    rh_status >/dev/null 2>&1
-}
-
-case "$1" in
-    start)
-        rh_status_q && exit 0
-        $1
-        ;;
-    stop)
-        rh_status_q || exit 0
-        $1
-        ;;
-    restart|configtest)
-        $1
-        ;;
-    reload)
-        rh_status_q || exit 7
-        $1
-        ;;
-    force-reload)
-        force_reload
-        ;;
-    status)
-        rh_status
-        ;;
-    condrestart|try-restart)
-        rh_status_q || exit 0
-            ;;
-    *)
-        echo $"Usage: $0 {start|stop|status|restart|condrestart|try-restart|reload|force-reload|configtest}"
-        exit 2
-esac
+[Unit]
+Description=The NGINX HTTP and reverse proxy server
+After=syslog.target network.target remote-fs.target nss-lookup.target
+[Service]
+Type=forking
+PIDFile=/var/run/nginx.pid
+ExecStartPre=/usr/sbin/nginx -t
+ExecStart=/usr/sbin/nginx
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s QUIT $MAINPID
+PrivateTmp=true
+[Install]
+WantedBy=multi-user.target
 EOF
-chmod +x /etc/init.d/nginx
 fi
 
 echo "All done.";
-echo "Start with /etc/init.d/nginx start"
+echo "Start with systemctl start nginx"
 echo "or with sudo nginx"
