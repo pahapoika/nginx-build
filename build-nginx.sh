@@ -38,7 +38,13 @@ rm -rf /etc/nginx-default
 mkdir $BPATH
 
 # Ensure the required software to compile nginx is installed
-yum -y groupinstall "Development Tools"
+#yum -y groupinstall "Development Tools"
+apt-get update && apt-get -y install \
+  binutils \
+  build-essential \
+  curl \
+  dirmngr \
+  libssl-dev
    
 # Download the source files
 curl -L $SOURCE_PCRE$VERSION_PCRE.tar.gz -o ./build/PCRE.tar.gz && \
@@ -90,8 +96,8 @@ if [ ! -d "/var/cache/nginx/" ]; then
 fi
 
 # Add nginx group and user if they do not already exist
-id -g nginx &>/dev/null || groupadd --system nginx
-id -u nginx &>/dev/null || useradd --system -d /var/cache/nginx --shell /sbin/nologin -g nginx nginx
+id -g nginx &>/dev/null || addgroup --system nginx
+id -u nginx &>/dev/null || adduser --disabled-password --system --home /var/cache/nginx --shell /sbin/nologin --group nginx
 
 # Test to see if our version of gcc supports __SIZEOF_INT128__
 if gcc -dM -E - </dev/null | grep -q __SIZEOF_INT128__
