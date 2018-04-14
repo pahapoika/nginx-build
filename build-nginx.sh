@@ -9,12 +9,12 @@ set -e -x
 export VERSION_PCRE=pcre-8.42
 export VERSION_ZLIB=zlib-1.2.11
 export VERSION_LIBRESSL=libressl-2.7.2
-export VERSION_NGINX=nginx-1.13.11
+export VERSION_NGINX=nginx-1.13.12
 
 # Set checksums of latest versions
 export SHA256_PCRE=69acbc2fbdefb955d42a4c606dfde800c2885711d2979e356c0636efde9ec3b5
 export SHA256_ZLIB=c3e5e9fdd5004dcb542feda5ee4f0ff0744628baf8ed2dd5d66f8ca1197cb1a1
-export SHA256_NGINX=35799c974644d2896b34ba876461dfd142c1b11f06f5aa57d255a77d4da36f05
+export SHA256_NGINX=fb92f5602cdb8d3ab1ad47dbeca151b185d62eedb67d347bbe9d79c1438c85de
 export SHA256_LIBRESSL=917a8779c342177ff3751a2bf955d0262d1d8916a4b408930c45cef326700995
 
 # Set GPG keys used to sign downloads
