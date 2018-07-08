@@ -33,7 +33,7 @@ export BPATH=$(pwd)/build
 today=$(date +"%Y-%m-%d")
 
 # Clean out any files from previous runs of this script
-rm -rf build
+rm -rf $BPATH
 rm -rf /etc/nginx-default
 mkdir $BPATH
 
@@ -47,14 +47,14 @@ apt-get update && apt-get -y install \
   libssl-dev
    
 # Download the source files
-curl -L $SOURCE_PCRE$VERSION_PCRE.tar.gz -o ./build/PCRE.tar.gz && \
-  echo "${SHA256_PCRE} ./build/PCRE.tar.gz" | sha256sum -c -
-curl -L $SOURCE_ZLIB$VERSION_ZLIB.tar.gz -o ./build/ZLIB.tar.gz && \
-  echo "${SHA256_ZLIB} ./build/ZLIB.tar.gz" | sha256sum -c -
-curl -L $SOURCE_NGINX$VERSION_NGINX.tar.gz -o ./build/NGINX.tar.gz && \
-  echo "${SHA256_NGINX} ./build/NGINX.tar.gz" | sha256sum -c -
-curl -L $SOURCE_LIBRESSL$VERSION_LIBRESSL.tar.gz -o ./build/LIBRESSL.tar.gz && \
-  echo "${SHA256_LIBRESSL} ./build/LIBRESSL.tar.gz" | sha256sum -c -  
+curl -L $SOURCE_PCRE$VERSION_PCRE.tar.gz -o $BPATH/PCRE.tar.gz && \
+  echo "${SHA256_PCRE} $BPATH/PCRE.tar.gz" | sha256sum -c -
+curl -L $SOURCE_ZLIB$VERSION_ZLIB.tar.gz -o $BPATH/ZLIB.tar.gz && \
+  echo "${SHA256_ZLIB} $BPATH/ZLIB.tar.gz" | sha256sum -c -
+curl -L $SOURCE_NGINX$VERSION_NGINX.tar.gz -o $BPATH/NGINX.tar.gz && \
+  echo "${SHA256_NGINX} $BPATH/NGINX.tar.gz" | sha256sum -c -
+curl -L $SOURCE_LIBRESSL$VERSION_LIBRESSL.tar.gz -o $BPATH/LIBRESSL.tar.gz && \
+  echo "${SHA256_LIBRESSL} $BPATH/LIBRESSL.tar.gz" | sha256sum -c -  
 
 
 # Download the signature files
