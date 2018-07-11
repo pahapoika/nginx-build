@@ -154,7 +154,7 @@ cd $BPATH/$VERSION_NGINX
 --without-mail_imap_module \
 --without-mail_pop3_module \
 --without-mail_smtp_module
-make -j4
+make -j8
 make install
 make clean
 strip -s /usr/sbin/nginx*
